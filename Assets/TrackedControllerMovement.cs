@@ -14,6 +14,7 @@ public class TrackedControllerMovement : MonoBehaviour
     private SteamVR_Controller.Device device { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
     private SteamVR_TrackedObject trackedObj;
     private Vector3[] contPos;
+    private GameObject camera;
     private int i;
 
     private Vector3 diferenca;
@@ -31,7 +32,9 @@ public class TrackedControllerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(diferenca);
+        wheelchair.eulerAngles = new Vector3(wheelchair.eulerAngles.x, head.eulerAngles.y, head.eulerAngles.z);
+        wheelchair.position = new Vector3(wheelchair.position.x, wheelchair.position.y, head.position.z);
+        //Debug.Log(diferenca);
         if (device.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
         {
             contPos[i] = transform.position;
@@ -45,7 +48,7 @@ public class TrackedControllerMovement : MonoBehaviour
                 Vector3 dir = contPos[1] - contPos[0];
                 if (dir.y < 0 && dir.z < 0 || dir.y > 0 && dir.z > 0)
                 {
-                    rig.position = rig.position + head.forward * (3/2) * device.velocity.magnitude * Time.deltaTime;
+                    rig.position = rig.position - head.forward * (4/2) * device.velocity.magnitude * Time.deltaTime;
                     wheelchair.position = rig.position - diferenca;
                 }
                 else
@@ -53,7 +56,11 @@ public class TrackedControllerMovement : MonoBehaviour
                     dir = contPos[0] - contPos[1];
                     if(dir.y > 0 && dir.z > 0 || dir.y < 0 && dir.z < 0)
                     {
-                        rig.position = rig.position + head.forward * (3/2) * device.velocity.magnitude * Time.deltaTime;
+                        rig.position = rig.position - head.forward * (4/2) * device.velocity.magnitude * Time.deltaTime;
+                        wheelchair.position = rig.position - diferenca;
+                    }
+                    else{
+                        rig.position = rig.position + head.forward * (4/2) * device.velocity.magnitude * Time.deltaTime;
                         wheelchair.position = rig.position - diferenca;
                     }
                 }

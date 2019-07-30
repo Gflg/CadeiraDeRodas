@@ -15,7 +15,7 @@ public class TrackedControllerMovement : MonoBehaviour
     private SteamVR_TrackedObject trackedObj;
     private Vector3[] contPos;
     private GameObject camera;
-    private int i;
+    private int i, timer=0;
 
     private Vector3 diferenca;
 
@@ -37,16 +37,27 @@ public class TrackedControllerMovement : MonoBehaviour
         //Debug.Log(diferenca);
         if (device.GetPress(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger))
         {
+            
             contPos[i] = transform.position;
             i++;
-            if (i == 2)
-                i = 0;
+            /*if (i == 2)
+                i = 0;*/
 
             Debug.Log(i);
-            if (device.velocity.sqrMagnitude > 0.08)
+            if (device.velocity.sqrMagnitude > 0 && i==2)
             {
                 Vector3 dir = contPos[1] - contPos[0];
-                if (dir.y < 0 && dir.z < 0 || dir.y > 0 && dir.z > 0)
+                if (dir.z < 0){
+                    rig.position = rig.position - head.forward * (8/2) * device.velocity.magnitude * Time.deltaTime;
+                    wheelchair.position = rig.position - diferenca;
+                    wheelchair.position = new Vector3(wheelchair.position.x, wheelchair.position.y, head.position.z);
+                }
+                else if(dir.z > 0){
+                    rig.position = rig.position + head.forward * (8/2) * device.velocity.magnitude * Time.deltaTime;
+                    wheelchair.position = rig.position - diferenca;
+                    wheelchair.position = new Vector3(wheelchair.position.x, wheelchair.position.y, head.position.z);
+                }
+                /*if (dir.y < 0 && dir.z < 0 || dir.y > 0 && dir.z > 0)
                 {
                     rig.position = rig.position - head.forward * (4/2) * device.velocity.magnitude * Time.deltaTime;
                     wheelchair.position = rig.position - diferenca;
@@ -63,9 +74,10 @@ public class TrackedControllerMovement : MonoBehaviour
                         rig.position = rig.position + head.forward * (4/2) * device.velocity.magnitude * Time.deltaTime;
                         wheelchair.position = rig.position - diferenca;
                     }
-                }
+                }*/
 
                 rig.position = new Vector3(rig.position.x, 0, rig.position.z);
+                i=0;
             }
         }
     }
